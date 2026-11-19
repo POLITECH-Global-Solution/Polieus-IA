@@ -1,0 +1,40 @@
+{
+  "modelo": "polieus_regressao",
+  "python": "3.12.14",
+  "scikit_learn": "1.8.0",
+  "pandas": "2.2.3",
+  "numpy": "2.3.5",
+  "joblib": "1.5.3",
+  "entradas": [
+    "servico",
+    "distrito",
+    "dia_semana"
+  ],
+  "servicos": [
+    "Acessibilidade - solicitar avaliação de obstáculo na calçada",
+    "Calçada particular - denunciar calçada danificada ou inexistente",
+    "Calçada pública - solicitar manutenção",
+    "Guias para travessia de pedestres - Solicitar rebaixamento",
+    "Ponto de ônibus – Solicitar manutenção, conserto ou limpeza de equipamento existente",
+    "Solicitar limpeza de bueiros, boca de lobo e poços de visita",
+    "Tapa-buraco",
+    "Tapa-buraco em faixa exclusiva ou corredor de ônibus"
+  ],
+  "dia_semana": "texto de 0 (segunda-feira) a 6 (domingo), calculado da abertura",
+  "saida": "dias corridos até a finalização administrativa observada",
+  "regressor": "Boosting",
+  "finalizacoes_de_ajuste_anteriores_a": "2026-09-01",
+  "periodo_teste": "2026-09",
+  "metricas_teste": {
+    "Boosting": {
+      "MAE (dias)": 4.313031119101797,
+      "RMSE (dias)": 6.740229678099691,
+      "R²": -0.11391108563244523
+    },
+    "Mediana por serviço": {
+      "MAE (dias)": 4.564478371501273,
+      "RMSE (dias)": 7.08911289432597,
+      "R²": -0.23221054144373543
+    }
+  }
+}

@@ -1,0 +1,10 @@
+/regressao 200 {'dias_estimados': 5.63, 'significado': 'Duração administrativa histórica estimada em dias corridos.'}
+/agrupamento 200 {'distrito': 'AGUA RASA', 'grupo': 0, 'mes': '2026-08', 'origem': 'Histórico SP156', 'perfil_medio_percentual': {'Bueiros': 14.5, 'Calçada particular': 2.29, 'Calçada pública': 3.39, 'Corredor de ônibus': 2.13, 'Guias': 0.64, 'Obstáculo': 2.99, 'Pontos de ônibus': 1.15, 'Tapa-buraco': 72.9}, 'total_solicitacoes': 91}
+/agrupamento 200 {'distrito': 'AGUA RASA', 'grupo': 0, 'mes': '2026-08', 'origem': 'Composição informada pelo sistema solicitante', 'perfil_medio_percentual': {'Bueiros': 14.5, 'Calçada particular': 2.29, 'Calçada pública': 3.39, 'Corredor de ônibus': 2.13, 'Guias': 0.64, 'Obstáculo': 2.99, 'Pontos de ônibus': 1.15, 'Tapa-buraco': 72.9}, 'total_solicitacoes': 91}
+/regressao 200 {'dias_estimados': 0.4, 'significado': 'Duração administrativa histórica estimada em dias corridos.'}
+/regressao 422 {'erro': 'Cobertura disponível para o município de São Paulo, SP.'}
+/regressao 422 {'erro': 'Escolha um serviço do catálogo.'}
+/regressao 422 {'erro': 'Data de abertura inexistente.'}
+/agrupamento 422 {'erro': 'Sem perfil histórico para esse distrito e mês.'}
+/agrupamento 422 {'erro': 'Envie as oito proporções, identificadas pelos serviços do catálogo.'}
+Verificações concluídas.

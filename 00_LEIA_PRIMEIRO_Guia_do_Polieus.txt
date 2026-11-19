@@ -1,0 +1,223 @@
+BEM-VINDO AO POLIEUS
+Global Solution FIAP 2026/2 · Artificial Intelligence & Chatbot
+Nome do projeto: Polieus
+Nome do grupo: Politech
+Turma: 1TDSPH
+
+Isabelle Ferreira Neri Feitoza — RM 573507
+Marina Fernandes Gomes Mesquita — RM 571265
+Milena Silva Conegin — RM 568923
+Murilo Almeida Rodrigues de Souza — RM 573977
+Henrique Bonachela de Carvalho Carabante — RM 573620
+
+COMO LER ESTE GUIA
+Para conhecer a plataforma, comece na seção 1. Para estudar os modelos, leia a seção 2 e execute os notebooks conforme a seção 3. Para demonstrar os modelos já treinados, extraia o pacote e vá diretamente à seção 4. Para experimentar pelo navegador, basta seguir as seções 4.2 e 4.3. A seção 5 relaciona os arquivos aos entregáveis da disciplina. A última seção descreve a conexão com o site.
+
+1 | O PROJETO POLIEUS
+
+O Polieus é uma proposta de participação cidadã e gestão urbana da equipe Politech. Seu ponto de partida é uma dificuldade cotidiana: um morador encontra uma barreira em uma calçada e precisa comunicar onde ela está, explicar como afeta a circulação e acompanhar a providência tomada. Para a gestão municipal, muitos relatos individuais trazem outra questão: quais tipos de problema aparecem com frequência e como sua distribuição muda de uma localidade para outra?
+
+Na jornada proposta, o cidadão escolhe uma categoria, descreve o problema, informa a localização e pode acrescentar uma fotografia. O protocolo identifica a ocorrência para acompanhamento. A equipe municipal consulta as demandas, registra as mudanças de situação e explica os encaminhamentos. A área de transparência ajuda a população a interpretar indicadores sobre os registros. CitizenTech é o emprego da tecnologia para facilitar essa relação entre cidadãos e poder público.
+
+A proposta da plataforma abrange municípios paulistas. Nesta disciplina, o estudo utiliza o município de São Paulo, que é a capital do estado. Distrito é uma divisão do território municipal. Sacomã e Água Rasa, por exemplo, situam-se dentro da mesma cidade. A previsão foi testada com dados da capital. Resultados para outra prefeitura exigiriam dados e avaliação daquele contexto.
+
+Possível complemento entre municípios paulistas. A entrega inclui o estudo por distritos da capital. Uma comparação entre municípios constitui uma extensão proposta. Para reproduzir as mesmas análises seriam necessários registros identificados por município, com categorias de serviço comparáveis, datas de abertura e finalização, status e períodos de cobertura conhecidos. As contagens agregadas por município permitiriam comparar a composição da demanda, mas a regressão individual também requer a duração observada por chamado.
+
+
+2 | A INTELIGÊNCIA ARTIFICIAL NO POLIEUS
+
+O SP156 é o canal municipal do qual provêm os registros públicos usados no estudo. Um chamado é um pedido registrado. Dois moradores podem relatar o mesmo problema físico. A quantidade de chamados mede a procura registrada pelo serviço. Essa distinção é importante para interpretar os resultados e para preservar a revisão humana das decisões de prioridade.
+
+A prefeitura publica os chamados em arquivos trimestrais. Para estudar os perfis, precisamos de uma linha por distrito e mês. Para estudar os dias de atendimento, precisamos de uma linha por solicitação com duração conhecida. O notebook 01 transforma as mesmas fontes nessas duas tabelas, documenta as exclusões e permite conferir os totais antes de treinar. Dividir o estudo em três arquivos é uma escolha de organização da equipe. Os modelos aprendem nos notebooks 02 e 03.
+
+O gestor quer saber quais territórios apresentam composições de pedidos semelhantes. Como o histórico não fornece grupos previamente identificados, usamos agrupamento, uma forma de aprendizagem não supervisionada. A segunda pergunta pede um número de dias. Como temos exemplos passados com abertura e finalização, usamos regressão, uma forma de aprendizagem supervisionada. Uma classificação exigiria definir uma categoria-alvo, como uma prioridade validada, e responderia a outra pergunta.
+
+2.1 | Os oito serviços e o que cada um representa
+
+A seleção usa o nome registrado na fonte. Os exemplos ilustram situações de uso. Cada chamado entra uma vez na contagem de seu serviço.
+
+1. Tapa-buraco. Pedido de reparo localizado no pavimento de uma via. Um exemplo é um buraco na pista de tráfego comum. O SP156 distingue os pedidos associados a corredores e faixas exclusivas de ônibus.
+
+2. Tapa-buraco em faixa exclusiva ou corredor de ônibus. Pedido de reparo no pavimento de uma faixa exclusiva ou corredor de ônibus. A localização operacional distingue essa classe do tapa-buraco em via comum.
+
+3. Acessibilidade - solicitar avaliação de obstáculo na calçada. Solicitação de avaliação de uma barreira no passeio que dificulta a circulação. O registro representa um pedido de vistoria ou avaliação. A remoção efetiva do obstáculo exige confirmação posterior.
+
+4. Calçada pública - solicitar manutenção. Pedido de manutenção de uma calçada identificada como pública. Um exemplo é um trecho de passeio público com piso danificado que dificulta a passagem a pé.
+
+5. Calçada particular - denunciar calçada danificada ou inexistente. Denúncia de passeio particular danificado ou inexistente. O trâmite pode envolver fiscalização. A duração administrativa precisa ser interpretada conforme esse tipo de atendimento.
+
+6. Guias para travessia de pedestres - Solicitar rebaixamento. Pedido de rebaixamento de guia em travessia de pedestres, por exemplo para facilitar a passagem de cadeira de rodas entre a calçada e a pista.
+
+7. Solicitar limpeza de bueiros, boca de lobo e poços de visita. Solicitação de limpeza de estruturas da drenagem urbana, como uma boca de lobo obstruída. A categoria permite observar demandas de escoamento de água em vias de circulação.
+
+8. Ponto de ônibus – Solicitar manutenção, conserto ou limpeza de equipamento existente. Pedido de manutenção, conserto ou limpeza de equipamento já existente em ponto de ônibus. Um exemplo é um abrigo danificado. Reclamações sobre intervalos de linhas e pedidos de implantação têm outras categorias.
+
+2.2 | O modelo de agrupamento
+
+Distrito-mês é a unidade de observação. Água Rasa em agosto e Água Rasa em setembro são duas linhas. Cada uma descreve um distrito da capital durante um mês de abertura. Se houver 20 solicitações e cinco forem de limpeza de bueiros, a participação desse serviço será 5 ÷ 20 = 25%. O denominador inclui os oito serviços selecionados.
+
+Agrupamento territorial reúne linhas que apresentam composições semelhantes. Distritos distantes podem aparecer no mesmo grupo. K-Means é o algoritmo utilizado. A letra K indica a quantidade de grupos experimentada. O algoritmo atribui cada perfil ao centro mais próximo, recalcula os centros a partir dos perfis atribuídos e repete esse processo até estabilizar ou atingir o limite de iterações. Cada centro resume um perfil típico. Grupo 0 e grupo 1 são identificadores, sem ordem de urgência.
+
+Silhueta compara a distância de uma observação aos membros do próprio grupo com sua distância aos membros do grupo vizinho mais próximo, em média. A escala vai de −1 a 1. Valores próximos de 1 indicam separação clara, perto de zero, os grupos se sobrepõem, um valor negativo sugere maior proximidade com outro grupo. Neste teste, a média de 0,283 indica separação limitada.
+
+ARI, sigla de Adjusted Rand Index (índice de Rand ajustado), compara como duas divisões agrupam os mesmos pares de observações, com ajuste para concordância esperada ao acaso. Vale 1 para divisões equivalentes, mesmo que os números dos grupos sejam trocados. Zero corresponde à concordância esperada ao acaso, valores negativos também são possíveis. O ARI de 0,913 mostra grande concordância com o agrupamento que usa somente a participação de tapa-buraco. Esse valor não representa porcentagem de acertos.
+
+Estabilidade avalia se a divisão muda muito quando alteramos a amostra de treino. Davies–Bouldin compara a dispersão interna dos grupos com a separação entre os centros. Valores menores favorecem grupos mais compactos e separados na representação avaliada. Nenhuma dessas medidas determina qual distrito deve receber uma obra primeiro.
+
+2.3 | O modelo de regressão
+
+Regressão da duração administrativa é a estimativa do número de dias corridos entre a abertura e a finalização administrativa de um pedido. Um pedido aberto no dia 2 e finalizado no dia 10 do mesmo mês fornece um exemplo observado de oito dias. Esse número é o alvo. Serviço, distrito quando conhecido e dia da semana da abertura são os atributos de entrada. Com eles, o modelo aprende a estimar o alvo de outros chamados. A finalização registrada permite medir o tempo administrativo. A confirmação de um reparo físico depende de vistoria ou registro da execução.
+
+Treino, validação e teste têm papéis distintos. O treino ajusta o modelo com exemplos antigos. A validação orienta a escolha entre algoritmos. O teste mede o erro em um período posterior reservado. Usar a data de finalização como entrada revelaria uma informação futura, problema conhecido como vazamento de dados.
+
+Referência é uma previsão simples para comparar resultados. Aqui ela usa a mediana histórica do serviço. MAE (Mean Absolute Error, erro absoluto médio) resume o tamanho médio das diferenças absolutas em dias. RMSE (Root Mean Squared Error, raiz do erro quadrático médio) também é expresso em dias e dá maior peso aos erros grandes. R² (coeficiente de determinação) compara o erro quadrático com o de uma previsão constante igual à média do conjunto avaliado. Um valor negativo indica erro quadrático superior ao dessa constante. O MAE de 4,31 dias no teste resume muitos chamados e não corresponde a uma margem garantida para cada morador.
+
+Pipeline reúne as transformações das entradas e o estimador treinado. Serialização grava esse objeto em um arquivo .joblib. A API Flask reabre o arquivo e aplica as mesmas transformações a uma nova entrada, sem repetir o treinamento.
+
+Análise exploratória é a leitura inicial das tabelas com contagens, proporções, gráficos e medidas de duração. Cobertura é a parcela de registros que atende aos critérios de uma análise. Um valor ausente indica que aquela informação está indisponível. Uma duração extrema pode corresponder a um caso real e precisa ser examinada antes de qualquer exclusão.
+
+Uma árvore de decisão aprende divisões sucessivas dos dados. O boosting combina árvores pequenas, cada uma ajustada para melhorar o resultado construído nas etapas anteriores. Ambas as alternativas foram comparadas com uma referência simples. A mediana é o valor central de uma lista ordenada. O percentil 90 é o limite abaixo do qual se encontram aproximadamente 90% das observações. Examinar os pedidos acima desse limite ajuda a perceber se o modelo subestima atendimentos mais demorados.
+
+Exemplo de leitura dos resultados: na amostra de teste, o erro absoluto médio da regressão foi de 4,31 dias. Nos pedidos que ultrapassaram 19 dias, a duração foi subestimada em média em 15,18 dias. Para o cidadão, isso significa que a estimativa histórica merece cautela especial quando o atendimento se prolonga. No agrupamento, a participação de limpeza de bueiros nos dois perfis de treino foi de 14,5% e 31,1%. Essa diferença orienta uma pergunta ao gestor sobre a composição da demanda local.
+
+3 | COMO EXECUTAR OS NOTEBOOKS E ENVIAR OS CSVs MANUALMENTE
+
+Um ZIP reúne arquivos e pastas em um pacote compactado. Extraia seu conteúdo antes de começar. Um notebook (.ipynb) combina texto explicativo, células de código e resultados. O Google Colab executa essas células em um computador remoto, chamado ambiente de execução. Cada sessão possui seu próprio painel Arquivos. Um CSV guarda uma tabela em texto: cada linha contém um registro, e um separador distingue as colunas. O dataset é o conjunto de dados estudado.
+
+Para ler as três tabelas no Excel, abra a pasta consulta_excel. Os arquivos .xlsx numerados 01, 02 e 03 correspondem à cobertura, aos perfis mensais e às durações individuais. Para executar os notebooks, utilize os arquivos .csv indicados em cada passo.
+
+Fluxo dos arquivos, em quatro passos
+
+PASSO 1 · Localizar os dois arquivos originais
+A pasta dados_originais_SP156 contém os dois CSVs trimestrais completos da Prefeitura. Após extrair o ZIP, use essas cópias para o envio manual no passo 2. A pasta dados_polieus contém as três tabelas derivadas que o notebook 01 produz. Para obter os originais diretamente da fonte, use os links abaixo. A identificação humana está na descrição de cada link. O código aceita os nomes originais do portal. Mantenha o conteúdo dos CSVs tal como foi baixado.
+
+4º trimestre de 2025 (outubro a dezembro) · arquivo-final-4-trim-25.csv
+https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/d3a98097-8128-45d4-b8fe-21874b81c971/download/arquivo-final-4-trim-25.csv
+3º trimestre de 2026 (julho a setembro) · arquivo-final-3-trim-26.csv
+https://dados.prefeitura.sp.gov.br/dataset/0aecfa2b-aa3a-40d4-8183-0d4351b7fd0a/resource/f67fcc12-8da4-485f-92a3-d2af40cc771e/download/arquivo-final-3-trim-26.csv
+
+PASSO 2 · Dois CSVs originais → notebook 01 → três tabelas preparadas
+Abra https://colab.research.google.com/ e entre em sua conta. Em Arquivo → Fazer upload de notebook, abra 01_Preparar_Dados_SP156.ipynb. Clique em Conectar. Abra o ícone de pasta à esquerda e arraste os dois CSVs para a área ao lado de sample_data. Aguarde o fim do envio e selecione Ambiente de execução → Executar tudo. O indicador ao lado da célula informa quando ela termina. A mensagem final é “Preparação concluída”.
+
+O primeiro notebook verifica a assinatura SHA-256, um resumo calculado a partir dos bytes do arquivo. Essa conferência identifica a edição usada na pesquisa. As duas fontes utilizam separadores e formatos de data diferentes. O código interpreta cada edição antes de reunir os pedidos. Para quem prefere a via automática, a mesma etapa baixa as edições ausentes.
+
+No painel Arquivos, atualize a lista, abra dados_polieus e use ⋮ → Fazer download em cada tabela que deseja guardar. A tabela 01_cobertura_por_servico_e_trimestre.csv mostra quantos chamados foram registrados e quantos tiveram uma duração observável. As outras duas tabelas seguem caminhos diferentes.
+
+PASSO 3 · Uma tabela de perfis → notebook 02 → modelo de agrupamento
+Abra 02_Agrupar_Perfis_Distrito_Mes.ipynb em uma sessão do Colab. Envie apenas 02_perfis_por_distrito_e_mes.csv para a área ao lado de sample_data. Clique em Executar tudo. A saída “Exportação verificada” confirma que o modelo foi gravado, reaberto e testado com um exemplo. Na pasta modelos_polieus, baixe modelo_perfis_territoriais.joblib e ficha_perfis_territoriais.json.
+
+PASSO 4 · Uma tabela de solicitações → notebook 03 → modelo de regressão
+Abra 03_Estimar_Dias_ate_Finalizacao.ipynb. Envie apenas 03_solicitacoes_com_duracao_em_dias.csv e clique em Executar tudo. Após “Exportação verificada”, baixe modelo_duracao_administrativa.joblib e ficha_duracao_administrativa.json.
+
+Para reproduzir diretamente os passos 3 e 4, use os CSVs da pasta dados_polieus que acompanha o ZIP. Em outra sessão do Colab, envie novamente o arquivo de entrada daquela etapa. Se uma célula acusar arquivo ausente, confira o nome completo e se o envio terminou. Execute novamente a partir da leitura do CSV.
+
+4 | COMO EXECUTAR E TESTAR A API EM PYTHON
+
+Uma API é uma interface pela qual um programa solicita uma operação a outro. Flask é a biblioteca de Python que recebe a solicitação e encaminha os dados ao modelo. Nesta API REST, a rota identifica a operação. HTTP é o protocolo de comunicação. GET consulta o catálogo. POST envia dados para análise. JSON é o formato de texto que organiza campos e valores tanto nos pedidos quanto nas respostas.
+
+Por que usamos Flask? A rubrica da Global Solution pede uma API Flask que consuma os modelos pré-treinados. No Challenge, a página de documentação do FastAPI permitia enviar exemplos pelo navegador. No Polieus, o Flask oferece uma página com dois formulários em português para realizar a demonstração. A pessoa que avalia escolhe os dados e lê a resposta. O próprio navegador faz o trabalho que poderia ser feito manualmente em ferramentas como Postman e Insomnia. Basta ter o navegador e o ambiente Python descrito a seguir.
+
+4.1 | Para que serve cada arquivo de apoio
+
+• api_polieus.py inicia o servidor, carrega os modelos treinados e disponibiliza as rotas. A predição ocorre quando chega um pedido válido.
+• requirements.txt lista bibliotecas e versões usadas pelo projeto. O instalador pip lê essa lista. Ela permite reconstruir um ambiente compatível com os modelos exportados. NumPy e pandas tratam números e tabelas, SciPy oferece operações científicas, scikit-learn implementa os algoritmos, joblib grava e lê os modelos, matplotlib gera os gráficos e Flask executa a API.
+• templates/demonstracao.html contém os formulários exibidos pelo Flask. Acesse a página pelo endereço da seção 4.3 para que ela seja preenchida com os dados do projeto.
+• testar_api_polieus.py é opcional. Ele executa verificações reproduzíveis usando o cliente de testes do Flask. Envia solicitações válidas e inválidas e compara exemplos de resposta com o resultado direto dos modelos. Pode ser executado antes de iniciar o servidor.
+• Resultados_dos_testes_da_API.txt guarda a saída de uma execução realizada pela equipe. É um registro de evidência que pode ser aberto no Bloco de Notas. Para repetir os testes no seu ambiente, execute o script de teste.
+• ficha_duracao_administrativa.json descreve as entradas do regressor, os serviços aceitos, a unidade em dias, o algoritmo, o período de teste, as métricas e as versões das bibliotecas. Consulte a ficha para entender o que enviar ao modelo e como interpretar sua saída.
+• ficha_perfis_territoriais.json documenta a sequência dos oito atributos, a configuração escolhida, os percentuais médios dos grupos e as métricas. A API lê esta ficha para apresentar o catálogo e descrever o perfil atribuído. A palavra “ficha” significa ficha técnica.
+• modelo_duracao_administrativa.joblib estima dias até a finalização administrativa. modelo_perfis_territoriais.joblib atribui um grupo ao perfil de serviços de um distrito em um mês. A API abre esses arquivos automaticamente.
+• Os dois arquivos .joblib contêm os modelos aprendidos, incluindo as transformações usadas no treinamento. Mantenha as fichas e os modelos da mesma execução na pasta modelos_polieus.
+• A tabela 02_perfis_por_distrito_e_mes.csv também é lida pela API para consultar a composição histórica de um distrito em um mês.
+
+4.2 | Instalação e inicialização
+
+Para experimentar a API local, extraia o ZIP por completo e use a versão de Python indicada abaixo. Quem está apenas estudando os notebooks no Colab pode seguir a seção 3. A instalação abaixo prepara o computador onde a API será executada.
+
+Preparação no Windows | Use o Prompt de Comando (cmd)
+
+A API foi testada com Python 3.12 e com as versões de bibliotecas indicadas em requirements.txt. Você pode manter o Python 3.14 para outros projetos. O comando py -3.12 seleciona a versão usada para criar o ambiente exclusivo do Polieus.
+
+Abra a pasta extraída que contém api_polieus.py e requirements.txt. Se o terminal mostrar “bash” ou “MINGW64”, abra uma sessão de cmd para usar os comandos Windows deste guia. O Bash interpreta as barras invertidas dos caminhos de outra forma.
+
+• VS Code: no painel Terminal, clique na seta ao lado do sinal + e escolha Command Prompt (Prompt de Comando). Digite os comandos na nova aba.
+• PyCharm: em File → Settings → Tools → Terminal, defina Shell path como cmd.exe e confirme com OK. Abra uma nova aba do Terminal para aplicar a mudança.
+• Pelo Explorador de Arquivos: na pasta extraída, digite cmd na barra de endereço e pressione Enter.
+
+No cmd, confira a versão disponível:
+    py -3.12 --version
+
+Se aparecer Python 3.12.x, siga para a criação do ambiente. Se aparecer “No suitable Python runtime found” ou se o comando py não for reconhecido, instale o Python 3.12 pelo gerenciador de pacotes do Windows:
+    winget install --id Python.Python.3.12 --exact
+
+Aguarde a instalação terminar, feche e reabra o editor, abra novamente o cmd na pasta do projeto e repita py -3.12 --version. Se o Windows não reconhecer winget, instale ou atualize o Instalador de Aplicativo (App Installer) pela Microsoft Store e abra um novo terminal. Prossiga quando a verificação mostrar Python 3.12.x.
+
+Preciso abrir o requirements.txt? O pip, instalador de bibliotecas do Python, lê esse arquivo automaticamente quando você executa a linha que contém “pip install -r requirements.txt”. A opção -r indica que a lista vem de um arquivo. Por exemplo, Flask==3.1.2 pede a versão 3.1.2 do Flask. Você pode abrir a lista no Bloco de Notas por curiosidade. Para instalar, basta manter o arquivo com seu nome original na pasta extraída e digitar o comando no terminal.
+
+No Windows, abra a pasta que contém api_polieus.py e requirements.txt no Explorador de Arquivos, digite cmd na barra de endereço e pressione Enter. No Linux ou macOS, abra o Terminal nessa pasta. Execute as três linhas correspondentes ao seu sistema, uma por vez. A primeira cria um ambiente virtual (.venv), uma pasta reservada para as bibliotecas do projeto. A segunda instala as dependências nesse ambiente e pode levar alguns minutos. A terceira inicia o serviço. Nas próximas sessões, abra novamente o terminal na pasta do projeto e execute somente a terceira linha.
+
+No Windows (Prompt de Comando)
+  py -3.12 -m venv .venv
+  .venv\Scripts\python -m pip install -r requirements.txt
+  .venv\Scripts\python api_polieus.py
+
+No Linux ou macOS:
+  python3.12 -m venv .venv
+  .venv/bin/python -m pip install -r requirements.txt
+  .venv/bin/python api_polieus.py
+
+Se o pip indicar que não encontrou requirements.txt, confira o conteúdo da pasta com dir (Windows) ou ls (Linux/macOS). Abra o terminal na pasta em que aparecem juntos esse arquivo e api_polieus.py e repita a linha de instalação. As pastas modelos_polieus e dados_polieus contêm os dados necessários para testar a API diretamente.
+
+O endereço 127.0.0.1 representa o próprio computador. A porta 5000 identifica o servidor da API nesse endereço. Mantenha o terminal aberto. Visite http://127.0.0.1:5000/ para consultar o catálogo. Para encerrar, use Ctrl+C. Os arquivos joblib e JSON da mesma execução ficam em modelos_polieus. A API também lê dados_polieus/02_perfis_por_distrito_e_mes.csv para a consulta histórica por distrito e mês.
+
+4.3 | Demonstração para o vídeo e para o professor
+Se abrir demonstracao.html por duplo clique, a página mostrará um link para continuar pelo Flask. Primeiro inicie o servidor conforme a seção 4.2.
+
+1. Com o servidor em execução, abra http://127.0.0.1:5000/demonstracao no navegador do mesmo computador. Deixe o terminal aberto enquanto usa a página. O endereço terminado em /demonstracao abre os formulários. O endereço terminado apenas em / exibe o catálogo técnico.
+
+2. Em “Duração de um chamado”, mantenha Tapa-buraco, Sacomã e 1º de setembro de 2026. Clique em “Estimar duração”. A previsão de 5,63 dias expressa o tempo estimado até a finalização administrativa do chamado. Altere o serviço e clique novamente para obter uma previsão para essa nova situação.
+
+3. Em “Perfil de um distrito”, mantenha Água Rasa e agosto de 2026. Clique em “Consultar perfil”. O histórico reúne 91 solicitações naquele distrito e mês. O grupo 0 identifica a composição de demanda atribuída pelo modelo. Os percentuais exibidos descrevem a média do grupo no treinamento. Experimente outro mês e observe o volume e o grupo retornados.
+
+4. Para compreender o que acontece ao clicar, acompanhe uma consulta. O navegador organiza os campos em JSON e os envia pelo método HTTP POST à rota /regressao ou /agrupamento. O Flask confere os dados e chama o modelo correspondente. O navegador lê a resposta e mostra o resultado no formulário. Esse percurso funciona localmente e pode ser demonstrado sem iniciar o site React ou a aplicação Java. Ao terminar, pressione Ctrl+C no terminal para encerrar o servidor.
+
+4.4 | Onde entra o arquivo testar_api_polieus.py?
+
+Para a gravação e para o teste manual do professor, o percurso termina na página da seção 4.3. A leitura, a edição e a execução de testar_api_polieus.py são opcionais. O arquivo permite à equipe repetir várias verificações de uma vez. Por exemplo, ele compara a resposta de Sacomã com a previsão feita diretamente pelo modelo e verifica se a API explica a restrição quando recebe “Campinas”. HTTP 200 indica sucesso. Neste segundo exemplo, HTTP 422 é o resultado esperado porque o município está fora da cobertura.
+
+Para repetir essa verificação, use o ambiente já preparado na seção 4.2. Abra um terminal na pasta extraída e execute apenas o comando do seu sistema. O cliente de testes do Flask faz as consultas internamente, inclusive com o servidor desligado.
+
+Windows
+  .venv\Scripts\python testar_api_polieus.py
+
+Linux ou macOS
+  .venv/bin/python testar_api_polieus.py
+
+Ao final, confira a mensagem “Verificações concluídas.”. O arquivo Resultados_dos_testes_da_API.txt também permite ler a saída registrada pela equipe.
+
+5 | O QUE COMPÕE A ENTREGA DA DISCIPLINA
+
+Nas páginas 23 a 28 do PDF oficial da Global Solution FIAP 2026/2, a disciplina solicita pelo menos dois modelos ligados à solução CitizenTech. Os dados coerentes com o problema correspondem a 10 pontos. Os notebooks com análise exploratória, treinamento e avaliação correspondem a 60. Os modelos pré-treinados exportados correspondem a 10. O código da API Flask com integração corresponde a 20. Este ZIP reúne os CSVs usados, os três notebooks, os dois modelos, a API e este TXT com a identificação do grupo. Os testes, as fichas e a lista de dependências apoiam a reprodução.
+
+Para o vídeo solicitado pelo professor, use os critérios de apresentação do edital. A equipe explica o problema e o uso da IA (15 pontos), a origem e a exploração dos dados (15), a escolha dos modelos (20), a interpretação das métricas (20), a demonstração ao vivo da API consumindo os modelos (20) e o domínio técnico de todos os integrantes (10). A apresentação vale 30% da nota. O edital indica a entrega pelo Portal do Aluno até 19/11/2026 às 23h55 e a apresentação na aula entre 23 e 27/11. O edital prevê nota zero para entrega fora do prazo ou do Portal e para o item cujo arquivo esteja ausente ou corrompido. As deduções previstas chegam a 50 pontos pela desconexão com CitizenTech, 30 por quantidade insuficiente ou tipos de modelos fora dos previstos e 20 por API inoperante ou sem consumo dos modelos pré-treinados.
+
+Para demonstrar o trabalho, percorra o fluxo de um pedido individual, mostre um distrito-mês e explique o que cada saída permite concluir.
+
+6 | CONEXÃO DA API COM O FRONT-END
+
+O Front-end é a interface que o cidadão ou o gestor utiliza. React organiza os componentes da tela e TypeScript permite descrever os tipos de dados usados no código. O fluxo previsto é React → Flask → modelo treinado → resposta em JSON → tela. A API pode ser demonstrada diretamente com os exemplos anteriores. A integração visual depende do site do grupo.
+
+No React com TypeScript, a rotina abaixo pode ser usada pelo formulário ou pelo painel. O cidadão pode seguir com o registro mesmo quando o recurso de IA retorna HTTP 422 por município ou serviço fora da cobertura.
+
+async function consultarIA(rota: "regressao" | "agrupamento", entrada: object) {
+  const resposta = await fetch("http://127.0.0.1:5000/" + rota, {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(entrada)
+  })
+  const dados = await resposta.json()
+  if (!resposta.ok) throw new Error(dados.erro || "Falha na consulta de IA")
+  return dados
+}
+
+O componente de tela deve tratar a exceção e exibir uma mensagem legível. Vite é o ambiente que serve o site durante o desenvolvimento. A origem reúne protocolo, endereço e porta usados pelo navegador. A API autoriza o navegador a consultar seus recursos a partir das origens locais do Vite na porta 5173. Para outro endereço de desenvolvimento, configure POLIEUS_ORIGENS como lista de origens separadas por vírgula. O navegador chama diretamente a API Flask. O código entregue pode ser testado independentemente da aplicação Java e do Oracle.

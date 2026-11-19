@@ -1,0 +1,61 @@
+{
+  "modelo": "polieus_agrupamento",
+  "python": "3.12.14",
+  "scikit_learn": "1.8.0",
+  "pandas": "2.2.3",
+  "numpy": "2.3.5",
+  "joblib": "1.5.3",
+  "entradas": [
+    "proporcao_Tapa-buraco",
+    "proporcao_Tapa-buraco em faixa exclusiva ou corredor de ônibus",
+    "proporcao_Acessibilidade - solicitar avaliação de obstáculo na calçada",
+    "proporcao_Calçada pública - solicitar manutenção",
+    "proporcao_Calçada particular - denunciar calçada danificada ou inexistente",
+    "proporcao_Guias para travessia de pedestres - Solicitar rebaixamento",
+    "proporcao_Solicitar limpeza de bueiros, boca de lobo e poços de visita",
+    "proporcao_Ponto de ônibus – Solicitar manutenção, conserto ou limpeza de equipamento existente"
+  ],
+  "k": 2,
+  "raiz": false,
+  "perfis_medios_percentuais": {
+    "0": {
+      "Tapa-buraco": 72.9,
+      "Corredor de ônibus": 2.13,
+      "Obstáculo": 2.99,
+      "Calçada pública": 3.39,
+      "Calçada particular": 2.29,
+      "Guias": 0.64,
+      "Bueiros": 14.5,
+      "Pontos de ônibus": 1.15
+    },
+    "1": {
+      "Tapa-buraco": 44.7,
+      "Corredor de ônibus": 2.92,
+      "Obstáculo": 6.17,
+      "Calçada pública": 6.27,
+      "Calçada particular": 5.69,
+      "Guias": 0.61,
+      "Bueiros": 31.13,
+      "Pontos de ônibus": 2.5
+    }
+  },
+  "periodo_ajuste": "2025-10 a 2025-12",
+  "periodo_teste": "2026-08 a 2026-09",
+  "metricas_teste": [
+    {
+      "Representação": "Oito serviços",
+      "Erro geral (pp)": 3.111941032363872,
+      "Erro outros (pp)": 2.446133790954359,
+      "Silhueta": 0.28254422689075553,
+      "Davies–Bouldin": 1.6133729399740464
+    },
+    {
+      "Representação": "Somente tapa-buraco",
+      "Erro geral (pp)": 3.1502325125848505,
+      "Erro outros (pp)": 2.4808450189517295,
+      "Silhueta": 0.28631370288613917,
+      "Davies–Bouldin": 1.61547087200846
+    }
+  ],
+  "ari_referencia": 0.9131502143494123
+}

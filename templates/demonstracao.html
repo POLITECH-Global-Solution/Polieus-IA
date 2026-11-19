@@ -1,0 +1,88 @@
+<!doctype html><html lang="pt-BR"><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><title>Polieus | Demonstração de IA</title>
+<style>body{max-width:48rem;margin:2rem auto;padding:0 1rem;background:#faf7f0;color:#362821;font:1rem/1.5 system-ui}h1,h2{font-family:Georgia,serif;color:#74251f}section{background:white;border:1px solid #dacdc0;border-radius:.6rem;padding:1.2rem;margin:1rem 0}label{display:block;margin:.6rem 0}select,input,button{max-width:100%;padding:.5rem;font:inherit}button{background:#74251f;color:white;border:0;border-radius:.3rem;cursor:pointer}output{display:block;margin-top:.8rem;white-space:pre-line}
+*{box-sizing:border-box}
+body{max-width:62rem;background:#f5f0e6;color:#1d1b19;font-family:Inter,system-ui,sans-serif}
+header{display:flex;align-items:center;gap:1.4rem;border-bottom:3px solid #b3261e;padding-bottom:1rem}
+header img{width:clamp(6rem,19vw,10rem);height:auto;border-radius:.5rem}
+h1,h2{font-family:Cinzel,Georgia,serif;color:#8f221b}
+h1{font-size:clamp(1.5rem,4vw,2.65rem);line-height:1.14;margin:.35rem 0}
+header small,footer{color:#5b564f}
+section{border-color:#d8d0c0;padding:clamp(1rem,3vw,2rem)}
+label{font-weight:600}select,input{display:block;width:100%;margin:.25rem 0 .8rem;border:1px solid #82786b;border-radius:.35rem;background:white;color:#1d1b19}
+button{background:#b3261e;padding:.65rem 1rem;font-weight:600}button:hover{background:#8f221b}button:disabled{background:#d8d0c0;color:#5b564f}
+:focus-visible{outline:3px solid #1d1b19;outline-offset:2px}
+output:not(:empty){background:#f5f0e6;border-left:3px solid #b3261e;padding:1rem}
+footer{border-top:1px solid #d8d0c0;margin-top:2rem}footer ul{padding-left:1.3rem}
+</style>
+<header><img src="../static/polieus.png" alt="Polieus"><div><small>Global Solution · Equipe Politech</small><h1>Inteligência Artificial</h1></div></header><section id="inicio">
+<h2>Abrir a demonstração</h2>
+<p>Extraia o ZIP e inicie a API seguindo a seção 4.2 do guia. Com o terminal aberto, acesse a página que conecta os formulários aos modelos.</p>
+<a href="http://127.0.0.1:5000/demonstracao">Abrir a demonstração no navegador</a>
+</section>
+<main id="consultas" hidden>
+<p>Explore as solicitações do SP156 na cidade de São Paulo. Os exemplos já estão preenchidos. Altere os campos para fazer outra consulta.</p>
+<section><h2>Duração de um chamado</h2>
+<p>Estime os dias corridos entre a abertura e a finalização administrativa.</p>
+<form action="/regressao">
+<label>Serviço <select name="servico"></select></label>
+<label>Distrito <select name="distrito"></select></label>
+<label>Data de abertura <input type="date" name="abertura" value="2026-09-01" required></label>
+<button>Estimar duração</button><output aria-live="polite"></output>
+</form></section>
+<section><h2>Perfil de um distrito</h2>
+<p>Consulte o grupo que reúne combinações semelhantes dos oito serviços.</p>
+<form action="/agrupamento">
+<label>Distrito <select name="distrito"></select></label>
+<label>Mês <select name="mes"></select></label>
+<button>Consultar perfil</button><output aria-live="polite"></output>
+</form></section></main><footer><h2>Representantes do projeto</h2><ul><li>Isabelle Ferreira Neri Feitoza — RM 573507</li><li>Marina Fernandes Gomes Mesquita — RM 571265</li><li>Milena Silva Conegin — RM 568923</li><li>Murilo Almeida Rodrigues de Souza — RM 573977</li><li>Henrique Bonachela de Carvalho Carabante — RM 573620</li></ul></footer>
+<script>
+// O arquivo aberto por duplo clique mostra as instruções. Na rota do Flask,
+// o catálogo preenche os mesmos campos com os valores usados pelos modelos.
+async function carregarCatalogo() {
+  if (location.pathname !== '/demonstracao') return;
+  const inicio = document.querySelector('#inicio');
+  try {
+    const resposta = await fetch('/');
+    if (!resposta.ok) throw new Error();
+    const catalogo = await resposta.json();
+    const [individual, territorial] = document.forms;
+    function preencher(campo, valores, padrao) {
+      for (const valor of valores) campo.add(new Option(valor, valor));
+      campo.value = padrao;
+    }
+    preencher(individual.elements.servico, catalogo.servicos, 'Tapa-buraco');
+    preencher(individual.elements.distrito, catalogo.distritos, 'SACOMA');
+    preencher(territorial.elements.distrito, catalogo.distritos, 'AGUA RASA');
+    preencher(territorial.elements.mes, catalogo.meses, '2026-08');
+    inicio.hidden = true;
+    document.querySelector('#consultas').hidden = false;
+  } catch {
+    inicio.querySelector('p').textContent = 'Não foi possível carregar o catálogo. Confira se a API está em execução e recarregue a página.';
+  }
+}
+carregarCatalogo();
+// Cada formulário envia os campos à mesma rota utilizada pelo sistema de testes.
+for (const form of document.forms) {
+  form.onsubmit = async event => {
+    event.preventDefault();
+    const output = form.querySelector('output');
+    const button = form.querySelector('button');
+    button.disabled = true;
+    output.textContent = 'Consultando…';
+    try {
+      const dados = Object.fromEntries(new FormData(form));
+      const resposta = await fetch(form.action, {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({...dados, municipio:'São Paulo', uf:'SP'})});
+      const r = await resposta.json();
+      if (!resposta.ok) throw new Error(r.erro || 'Falha na consulta.');
+      if ('dias_estimados' in r) {
+        output.textContent = 'Duração administrativa estimada: ' + r.dias_estimados.toLocaleString('pt-BR') + ' dias corridos.';
+      } else {
+        const medias = Object.entries(r.perfil_medio_percentual).map(([s,p]) => s.replace(/^proporcao_/, '') + ': ' + p.toLocaleString('pt-BR') + '%');
+        output.textContent = 'Grupo ' + r.grupo + ' · ' + r.total_solicitacoes + ' solicitações no distrito e mês.\nComposição média do grupo no treinamento:\n' + medias.join('\n');
+      }
+    } catch (erro) { output.textContent = erro.message; }
+    finally { button.disabled = false; }
+  };
+}
+</script></html>
